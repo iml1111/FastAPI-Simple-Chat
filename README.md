@@ -6,3 +6,6 @@ Simple Chat Application with FastAPI
 pip install -r requirements.txt
 uvicorn main:app --reload
 ```
+
+# References
+- https://fastapi.tiangolo.com/advanced/websockets/
