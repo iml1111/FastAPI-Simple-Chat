@@ -5,14 +5,29 @@
     <title>Fast-Simple-Chat</title>
 </head>
 <body>
-    <h1>WebSocket Chat</h1>
+    <h1>FastAPI Simple Chat</h1>
+
+    <p>
+        FastAPI Websocket을 구현한 Simple Chat Sample App입니다.
+        <br> - Room ID, User ID를 입력하여 Connect 버튼을 눌러 채팅방에 입장할 수 있습니다.
+        <br> - Message는 눌러 같은 Room ID에 있는 사용자들에게만 멀티캐스팅됩니다.
+        <br> - Broadcast 버튼을 눌러 모든 사용자에게 메시지를 보낼 수 있습니다.
+        <br> - Disconnect 버튼을 눌러 채팅방을 나갈 수 있습니다.
+        <br> - /room API 에서는 현재 접속중인 사용자들의 목록을 확인할 수 있습니다.
+    </p>
+
 
     <form action="" onsubmit="sendMessage(event)">
-        <label>Your ID: <input type="text" id="userId" autocomplete="off" value="some-user-id"/></label>
         <label>Room ID: <input type="text" id="roomId" autocomplete="off" value="some-room"/></label>
+        <label>Your ID: <input type="text" id="userId" autocomplete="off" value="some-user-id"/></label>
         <button onclick="connect(event)">Connect</button>
+        <button onclick="closeSocket()">Disconnect</button>
         <hr>
         <label>Message: <input type="text" id="messageText" autocomplete="off"/></label>
+        <button>Send</button>
+    </form>
+    <form action="" onsubmit="broadcastMessage(event)">
+        <label>Broadcast: <input type="text" id="broadcastText" autocomplete="off"/></label>
         <button>Send</button>
     </form>
 
@@ -24,11 +39,44 @@
         function connect(event) {
             var userId = document.getElementById("userId")
             var roomId = document.getElementById("roomId")
+
+            if (ws != null){
+                return false;
+            }
+
             ws = new WebSocket("ws://localhost:8000/room/" + roomId.value + "/ws?user_id=" + userId.value);
             ws.onmessage = function(event) {
+
                 var messages = document.getElementById('messages')
                 var message = document.createElement('li')
-                var content = document.createTextNode(event.data)
+
+                var text_message = ""
+                revieveMessage = JSON.parse(event.data)
+                if (revieveMessage.type == "message") {
+                    text_message = (
+                        revieveMessage.user_id
+                        + ": "
+                        + revieveMessage.message
+                    )
+                } else if (revieveMessage.type == "system") {
+                    text_message = (
+                        "[SYSTEM] "
+                        + revieveMessage.user_id
+                        + " "
+                        + revieveMessage.message
+                    )
+                } else if (revieveMessage.type == "broadcast") {
+                    text_message = (
+                        "[BROADCAST] "
+                        + revieveMessage.room_id
+                        + "//"
+                        + revieveMessage.user_id
+                        + ": "
+                        + revieveMessage.message
+                    )
+                }
+                var content = document.createTextNode(text_message)
+
                 message.appendChild(content)
                 messages.appendChild(message)
             };
@@ -37,9 +85,25 @@
 
         function sendMessage(event) {
             var input = document.getElementById("messageText")
-            ws.send(input.value)
+            ws.send(JSON.stringify({
+                "type": "message",
+                "message": input.value
+            }))
             input.value = ''
             event.preventDefault()
+        }
+        function broadcastMessage(event) {
+            var input = document.getElementById("broadcastText")
+            ws.send(JSON.stringify({
+                "type": "broadcast",
+                "message": input.value
+            }))
+            input.value = ''
+            event.preventDefault()
+        }
+        function closeSocket() {
+            ws.close()
+            ws = null
         }
     </script>
 </body>

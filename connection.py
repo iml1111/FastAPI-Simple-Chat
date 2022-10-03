@@ -9,6 +9,9 @@ class Connection(BaseModel):
     room_id: str
     user_id: str
 
+    class Config:
+        arbitrary_types_allowed = True
+
 
 class ConnectionManager:
     def __init__(self):
@@ -23,17 +26,21 @@ class ConnectionManager:
 
     async def send_personal_message(
         self,
-        message: str,
+        message: dict,
         conn: Connection
     ):
-        await conn.websocket.send_text(message)
+        await conn.websocket.send_json(message)
 
-    async def broadcast(self, message: str):
+    async def multicast(self, message: dict, room_id: str):
+        """Broadcast to specific room"""
+        for conn in self.connection_dict[room_id]:
+            await conn.websocket.send_json(message)
+
+    async def broadcast(self, message: dict):
         """All broadcast"""
         for room in self.connection_dict:
-            for conn 
-        for connection in self.active_connections:
-            await connection.send_text(message)
+            for conn in self.connection_dict[room]:
+                await conn.websocket.send_json(message)
 
 
 connection_manager = ConnectionManager()
