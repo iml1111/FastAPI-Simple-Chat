@@ -68,8 +68,9 @@
                 } else if (revieveMessage.type == "broadcast") {
                     text_message = (
                         "[BROADCAST] "
+                        + "("
                         + revieveMessage.room_id
-                        + "//"
+                        + ")"
                         + revieveMessage.user_id
                         + ": "
                         + revieveMessage.message
