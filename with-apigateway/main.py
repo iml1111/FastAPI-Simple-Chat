@@ -4,8 +4,8 @@ from typing import Any
 from fastapi import FastAPI, Body
 import boto3
 
-AWS_ACCESS_KEY_ID=os.environ['AWS_ACCESS_KEY_ID']
-AWS_SECRET_ACCESS_KEY=os.environ['AWS_SECRET_ACCESS_KEY']
+AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
+AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
 API_GATEWAY_ENDPOINT = os.environ['API_GATEWAY_ENDPOINT']
 
 
@@ -77,5 +77,5 @@ async def send_message(
     connection_manager.broadcast(
         message=body['message'],
     )
-    print(connection_id, body, params)
+    print(connection_id, body)
     return {'msg':'send-message accepted'}

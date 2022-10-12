@@ -11,4 +11,4 @@ export API_GATEWAY_ENDPOINT=https://{API-ID}.execute-api.{REGION}.amazonaws.com/
 pip install -r requirements.txt
 uvicorn main:app --reload
 ```
-샘플 코드에 대한 자세한 설명은 [여기]()에서 확인하실 수 있습니다.
+샘플 코드에 대한 자세한 설명은 [여기](https://blog.naver.com/shino1025/222898722779)에서 확인하실 수 있습니다.
