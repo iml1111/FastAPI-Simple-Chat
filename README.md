@@ -1,5 +1,8 @@
 # FastAPI-Simple-Chat
 Simple Chat Application with FastAPI
+<br/><br/>
+![image](https://user-images.githubusercontent.com/29897277/195250440-0defbae5-ea73-4198-b0d0-ac939f160398.png)
+
 
 # Get started
 ```shell
