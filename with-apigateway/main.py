@@ -1,15 +1,13 @@
 import os
 import logging
 from typing import Any
-from fastapi import FastAPI, Body, Request, status
-from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
-
+from fastapi import FastAPI, Body
 import boto3
 
 AWS_ACCESS_KEY_ID=os.environ['AWS_ACCESS_KEY_ID']
 AWS_SECRET_ACCESS_KEY=os.environ['AWS_SECRET_ACCESS_KEY']
 API_GATEWAY_ENDPOINT = os.environ['API_GATEWAY_ENDPOINT']
+
 
 class ConnectionManager:
 
@@ -42,14 +40,6 @@ class ConnectionManager:
 
 app = FastAPI()
 connection_manager = ConnectionManager()
-
-
-@app.exception_handler(RequestValidationError)
-async def validation_exception_handler(request: Request, exc: RequestValidationError):
-	exc_str = f'{exc}'.replace('\n', ' ').replace('   ', ' ')
-	logging.error(f"{request}: {exc_str}")
-	content = {'status_code': 10422, 'message': exc_str, 'data': None}
-	return JSONResponse(content=content, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
 
 @app.put("/connect")
